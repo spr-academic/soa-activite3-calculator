@@ -1,0 +1,6 @@
+*.log
+.DS_Store
+.idea/
+.vscode/
+soapui-settings.xml
+*-soapui-project.xml.bak
