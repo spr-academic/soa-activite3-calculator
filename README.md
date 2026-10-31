@@ -4,7 +4,7 @@ ESPRIT · Architecture Orientée Services · Année universitaire 2026–2027
 
 Ce dépôt est consacré uniquement à l’atelier **Calculator**, classé sous **Activité 3** sur Blackboard.
 
-Organisation GitHub : `spr-academic`. Convention : un dépôt par TD ou atelier, nommé `<matière>-<atelier>`. Ce dépôt est `soa-calculator` ; les autres travaux SOA auront leurs propres dépôts.
+Organisation GitHub : `spr-academic`. Convention : un dépôt par TD ou atelier, nommé `<matière>-activite<numéro>-<atelier>` (minuscules, sans accents, mots séparés par des tirets). Ce dépôt est `soa-activite3-calculator` ; les autres travaux SOA auront leurs propres dépôts.
 
 L’objectif est de découvrir, analyser et consommer un service Web SOAP existant avec SoapUI avant une éventuelle intégration Java.
 
