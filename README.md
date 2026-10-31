@@ -14,6 +14,9 @@ Ce travail analyse le contrat du service Calculator et sa consommation par messa
 | [Requête Add](requests/add.xml) | Message SOAP 1.1 pour `Add(15,20)` |
 | [Réponse du service](evidence/add-response.xml) | Réponse XML reçue lors de l'appel HTTP |
 | [En-têtes HTTP](evidence/add-http-headers.txt) | Statut et métadonnées de la réponse |
+| [Projet SoapUI](calculator-soapui-project.xml) | Deux interfaces, requêtes générées et test de l’addition |
+| [Compte rendu d’exécution SoapUI](evidence/soapui-validation.txt) | Opérations importées, assertions et résultat du test |
+| [Réponse reçue par SoapUI](evidence/soapui-add-response.xml) | Résultat de l’exécution du test |
 
 **WSDL du fournisseur :** http://www.dneonline.com/calculator.asmx?wsdl  
 **Point d'accès :** http://www.dneonline.com/calculator.asmx  
@@ -106,4 +109,52 @@ Le résultat reçu correspond au calcul attendu : **15 + 20 = 35**. Aucun élém
 
 ### Workshop SoapUI
 
-Validation SoapUI en cours : cette section sera complétée après exécution réelle du projet.
+Le projet **SOA-Activite3-Calculator** a été créé et exécuté le **31 octobre 2026** avec **SoapUI Open Source 5.9.1**, à partir de l’URL WSDL du fournisseur. L’import, la génération des requêtes et le test ont été réalisés avec le moteur SoapUI en mode automatisé, sans interface graphique.
+
+#### 5.1 Création du projet à partir du WSDL
+
+L’import a créé deux interfaces : `CalculatorSoap` pour SOAP 1.1 et `CalculatorSoap12` pour SOAP 1.2. Le [projet enregistré](calculator-soapui-project.xml) contient également la suite **Validation Calculator**, le cas **Add 15 et 20** et l’étape **Add(15,20)**.
+
+#### 5.2 Éléments générés automatiquement
+
+Chaque interface contient les quatre opérations `Add`, `Divide`, `Multiply`, `Subtract`, avec une requête exemple pour chacune : huit requêtes exemples au total. Les modèles originaux de `Add` sont conservés pour [SOAP 1.1](evidence/generated-CalculatorSoap-Add.xml) et [SOAP 1.2](evidence/generated-CalculatorSoap12-Add.xml).
+
+#### 5.3 Informations récupérées dans le contrat
+
+SoapUI a récupéré les bindings, leurs versions SOAP, les noms des opérations, les actions SOAP, le point d’accès et les schémas des messages. Ces schémas lui permettent de générer les paramètres `intA` et `intB` dans le namespace `http://tempuri.org/`.
+
+#### 5.4 Comparaison avec l’analyse du WSDL
+
+Les quatre opérations générées correspondent exactement à celles du contrat. Leur ordre d’affichage peut varier ; leurs noms et leur nombre sont identiques. L’opération `Add` reçoit bien deux entiers, `intA` puis `intB`.
+
+#### 5.5 Structure du message généré
+
+SoapUI génère automatiquement `Envelope`, un `Header` vide, `Body`, les déclarations de namespaces, l’élément de l’opération et les paramètres. Les valeurs sont initialement représentées par `?` ; elles doivent être renseignées avant l’appel. Le préfixe `tem` choisi par SoapUI et le namespace par défaut utilisé dans notre requête désignent le même namespace métier.
+
+#### Résultat du test
+
+Le test utilise le binding **SOAP 1.1**. Les deux valeurs ont été fixées à 15 et 20.
+
+| Contrôle | Résultat observé |
+|---|---|
+| Import du WSDL | Réussi : deux interfaces, quatre opérations par interface |
+| Exécution du cas de test | `FINISHED` |
+| Statut HTTP | `200` |
+| Assertion `SOAP Response` | `VALID` |
+| Assertion `XPath Match` sur `AddResult` | `VALID` : valeur égale à `35` |
+| Présence d’un `SOAP Fault` | Aucune dans la réponse reçue |
+
+Le compte rendu et la réponse XML sont disponibles dans [evidence/](evidence/README.md). Les requêtes SOAP 1.2 ont été générées et examinées ; le test métier enregistré porte sur SOAP 1.1.
+
+## Reproduire la validation
+
+1. Télécharger ou cloner ce dépôt.
+2. Dans SoapUI, choisir **File → Import Project** et ouvrir `calculator-soapui-project.xml`.
+3. Ouvrir **Validation Calculator → Add 15 et 20 → Add(15,20)**.
+4. Exécuter le cas de test et vérifier que les deux assertions passent et que `AddResult` vaut `35`.
+
+Le service distant doit être accessible. Le contrat utilisé lors du travail est conservé dans `wsdl/calculator.wsdl` pour consultation.
+
+## Conclusion
+
+Le contrat a permis d’identifier les opérations et de construire une requête conforme. L’exécution réelle avec SoapUI a confirmé le fonctionnement de l’addition pour le cas étudié : **Add(15,20) = 35**.

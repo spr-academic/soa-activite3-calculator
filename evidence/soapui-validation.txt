@@ -1,0 +1,23 @@
+SoapUI 5.9.1 — import réel du WSDL et requêtes générées
+Interface: CalculatorSoap12; SOAP SOAP 1.2
+  Operation: Add; requêtes générées: 1
+  Operation: Divide; requêtes générées: 1
+  Operation: Multiply; requêtes générées: 1
+  Operation: Subtract; requêtes générées: 1
+Interface: CalculatorSoap; SOAP SOAP 1.1
+  Operation: Add; requêtes générées: 1
+  Operation: Divide; requêtes générées: 1
+  Operation: Multiply; requêtes générées: 1
+  Operation: Subtract; requêtes générées: 1
+Date: 2026-10-31T19:33:03.693060854+01:00[Africa/Tunis]
+TestCase: FINISHED
+Assertion SOAP Response: VALID
+Assertion XPath Match: VALID
+HTTP: 200
+Réponse: <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <soap:Body>
+      <AddResponse xmlns="http://tempuri.org/">
+         <AddResult>35</AddResult>
+      </AddResponse>
+   </soap:Body>
+</soap:Envelope>
