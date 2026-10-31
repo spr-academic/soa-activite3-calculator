@@ -1,87 +1,109 @@
-# Activité 3 — Atelier Calculator : découvrir, analyser et consommer un service Web SOAP
+# SOA — Activité 3 : Atelier Calculator
 
-ESPRIT · Architecture Orientée Services · Année universitaire 2026–2027
+**ESPRIT · Année universitaire 2026–2027**  
+**Étudiant : Sayed Touati**  
+**Sujet : Découvrir, analyser et consommer un service Web SOAP**
 
-Dépôt : `spr-academic/soa-activite3-calculator`. Un dépôt par atelier ; convention `<matière>-activite<numéro>-<atelier>`.
+Ce travail analyse le contrat du service Calculator et sa consommation par messages SOAP. Le service étant déjà fourni, aucune implémentation de serveur ni application Java n'est nécessaire pour cet atelier.
 
-## Périmètre et état
+## Livrables
 
-Source : énoncé PROSIT_SOAP.pdf fourni par l'étudiant, trois pages.
-Le fournisseur propose un service Calculator existant : il faut analyser son contrat et le tester avec SoapUI, avant une éventuelle intégration Java. Aucune implémentation Java ni serveur n'est demandé ici.
+| Fichier | Contenu |
+|---|---|
+| [Contrat WSDL](wsdl/calculator.wsdl) | Copie du contrat récupéré auprès du fournisseur |
+| [Requête Add](requests/add.xml) | Message SOAP 1.1 pour `Add(15,20)` |
+| [Réponse du service](evidence/add-response.xml) | Réponse XML reçue lors de l'appel HTTP |
+| [En-têtes HTTP](evidence/add-http-headers.txt) | Statut et métadonnées de la réponse |
 
-WSDL indiqué : http://www.dneonline.com/calculator.asmx?wsdl
+**WSDL du fournisseur :** http://www.dneonline.com/calculator.asmx?wsdl  
+**Point d'accès :** http://www.dneonline.com/calculator.asmx  
+**Namespace métier :** `http://tempuri.org/`
 
-État au 31 octobre 2026 : énoncé lu ; réponses préparées ; téléchargement du WSDL et appels distants non réalisés avec succès (résolution DNS impossible dans l'environnement). Les détails propres au service ci-dessous sont des hypothèses à confirmer dans son WSDL actuel. Aucun succès SoapUI n'est revendiqué.
+## 1. Analyse
 
-## Partie 1 — Analyse
+### 1.1 Informations nécessaires pour invoquer une opération
 
-1. Il faut connaître l'adresse du point d'accès, l'opération exacte (casse comprise), les paramètres, leur ordre et leurs types, les namespaces, le format XML, la version SOAP et les informations de transport : méthode HTTP, Content-Type et, en SOAP 1.1 sur HTTP, SOAPAction. Il faut également respecter les exigences de sécurité si le contrat en prévoit.
-2. On trouve ces informations dans le WSDL et les schémas XSD qu'il référence, complétés si nécessaire par les politiques et la documentation du fournisseur.
-3. Sur ce service ASMX, `?wsdl` demande la description du service en Web Services Description Language. Cette URL décrit le contrat ; l'adresse d'invocation se lit dans le port du service, pas en supprimant arbitrairement le suffixe.
-4. Un WSDL complet, avec ses imports, peut suffire à construire une requête conforme pour un service simple. Il n'exécute pas l'appel et ne prouve ni la disponibilité du serveur, ni la réussite d'une opération. Il faut un client, une connexion réseau et l'analyse de la réponse.
+Il faut connaître le point d'accès, le nom exact de l'opération, les paramètres d'entrée, leur ordre et leurs types, ainsi que les espaces de noms XML. Il faut également respecter la version SOAP, le format du message et les informations HTTP définies par le binding.
 
-## Partie 2 — Hypothèses à vérifier dans le WSDL
+Pour l'addition étudiée :
 
-Les chemins suivants correspondent à un contrat WSDL 1.1.
+| Élément | Valeur relevée |
+|---|---|
+| Service | `Calculator` |
+| Opération | `Add` (la casse est significative) |
+| Paramètres | `intA`, puis `intB` |
+| Types | `xsd:int` pour les deux paramètres |
+| Style et encodage | Document / literal |
+| Action SOAP 1.1 | `http://tempuri.org/Add` |
 
-| Information | Disponible ? | Où ? |
+### 1.2 Où trouver ces informations ?
+
+Elles se trouvent dans le WSDL : `types` décrit les éléments XML et leurs types, `message` les messages échangés, `portType` les opérations, `binding` leur représentation technique et `service` les points d'accès.
+
+### 1.3 Pourquoi l'URL se termine-t-elle par `?wsdl` ?
+
+Sur ce service ASMX, le paramètre `?wsdl` permet d'obtenir la description du service en **Web Services Description Language**. Il s'agit de l'adresse du contrat ; l'adresse d'invocation est indiquée dans le port du service.
+
+### 1.4 Le WSDL suffit-il pour appeler une opération ?
+
+Le contrat contient les informations nécessaires à la construction d'une requête conforme pour ce service. Il ne réalise cependant aucun appel : il faut un client tel que SoapUI et une connexion au serveur. Seule l'analyse de la réponse permet de vérifier le résultat ou de détecter une erreur SOAP.
+
+## 2. Informations disponibles dans le WSDL
+
+| Information | Disponible ? | Emplacement et observation |
 |---|---|---|
-| Nom du service | Oui | `wsdl:service/@name` |
-| Opérations disponibles | Oui | `wsdl:portType/wsdl:operation`, puis association dans `wsdl:binding` |
-| Paramètres d'entrée | Oui | `wsdl:message/wsdl:part` et éléments du schéma dans `wsdl:types` ou XSD importé |
-| Type des paramètres | Oui | Attribut `type` et définitions XSD des éléments |
-| Adresse du service | Oui | `wsdl:service/wsdl:port/soap:address/@location` (ou extension SOAP 1.2) |
-| Format des messages | Oui | Messages et schémas ; `soap:binding/@style`, `soap:body/@use` dans le binding |
-| Namespace | Oui | `targetNamespace` du WSDL et du schéma ; déclarations `xmlns` |
+| Nom du service | Oui | `wsdl:service/@name` : `Calculator` |
+| Opérations | Oui | `wsdl:portType/wsdl:operation` : `Add`, `Subtract`, `Multiply`, `Divide` |
+| Paramètres d'entrée | Oui | `wsdl:types`, éléments de chaque opération : `intA`, `intB` |
+| Types des paramètres | Oui | Schéma XSD : `s:int`, soit des entiers signés sur 32 bits |
+| Adresse du service | Oui | `soap:address/@location` et `soap12:address/@location` |
+| Format des messages | Oui | Schéma XSD et bindings `document` / `literal` |
+| Namespace | Oui | `targetNamespace` : `http://tempuri.org/` |
 
-À confirmer : opération `Add`, paramètres `intA` et `intB` de type `xsd:int`, namespace `http://tempuri.org/`, et éventuelles opérations `Subtract`, `Multiply`, `Divide`. Ces valeurs ne sont pas des observations d'un WSDL téléchargé pendant cette séance.
+Le contrat expose deux bindings, **CalculatorSoap** (SOAP 1.1) et **CalculatorSoap12** (SOAP 1.2), pour les mêmes quatre opérations.
 
-## Partie 3 — Conception de add(15,20)
+## 3. Conception du message `Add(15,20)`
 
-Le fichier [requests/add.xml](requests/add.xml) propose une enveloppe SOAP 1.1 à vérifier contre le contrat. Le nom attendu sur le réseau est `Add`, même si l'énoncé utilise `add`.
-
-- `Envelope` est la racine du message, dans le namespace SOAP 1.1.
-- `Header` est vide ; il est facultatif si aucun en-tête applicatif n'est requis.
-- `Body` contient `Add` dans le namespace du service.
-- `intA` vaut 15 et `intB` vaut 20.
-
-Transport proposé, à confirmer dans le binding SOAP 1.1 :
-
-```http
-POST /calculator.asmx HTTP/1.1
-Host: www.dneonline.com
-Content-Type: text/xml; charset=utf-8
-SOAPAction: "http://tempuri.org/Add"
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Header/>
+  <soap:Body>
+    <Add xmlns="http://tempuri.org/">
+      <intA>15</intA>
+      <intB>20</intB>
+    </Add>
+  </soap:Body>
+</soap:Envelope>
 ```
 
-Résultat métier attendu : 35. Ce résultat attendu n'est pas une réponse effectivement reçue.
+- **Envelope** délimite le message SOAP 1.1.
+- **Header** est vide : aucun en-tête applicatif n'est requis pour cet appel. Il peut être omis.
+- **Body** contient l'opération `Add` dans le namespace du service.
+- **intA** et **intB** portent les valeurs 15 et 20, dans l'ordre défini par le schéma.
 
-## Partie 4 — Discussion
+L'appel SOAP 1.1 utilise HTTP `POST`, `Content-Type: text/xml; charset=utf-8` et `SOAPAction: "http://tempuri.org/Add"`. L'opération est nommée `Add` dans le contrat, même si l'énoncé emploie `add`.
 
-Nous ne sommes pas d'accord avec l'affirmation selon laquelle il serait inutile de regarder les messages SOAP. Le WSDL décrit la structure attendue, les opérations et leur transport. L'observation du message réellement envoyé permet de contrôler les valeurs, les namespaces et la conformité de l'appel. L'analyse de la réponse permet de vérifier le résultat ou de comprendre un SOAP Fault. Un contrat valide ne garantit pas un service disponible ni une réponse correcte.
+## 4. Discussion
 
-## Partie 5 — Validation expérimentale avec SoapUI
+L'affirmation « Le WSDL contient tout ce qu'il faut. Il est donc inutile de regarder les messages SOAP » est incorrecte.
 
-Cette partie reste à exécuter. Les éléments ci-dessous sont un protocole et des attentes, pas un compte rendu d'observations.
+Le WSDL définit le contrat attendu. L'observation des messages permet de vérifier que le client envoie les bonnes valeurs, les bons namespaces et une structure conforme. L'analyse de la réponse permet ensuite de contrôler le résultat et de comprendre un éventuel `SOAP Fault`. Un contrat correct ne garantit ni la disponibilité du service, ni la réussite d'un appel.
 
-1. Dans SoapUI, créer un nouveau projet SOAP nommé `SOA-Activite3-Calculator`, saisir l'URL du WSDL et activer la création des requêtes exemples. En cas d'échec, conserver le message d'erreur exact.
-2. Relever les interfaces/bindings, les opérations et les requêtes exemples générées. Vérifier quelles versions SOAP sont réellement proposées.
-3. Identifier les données récupérées : opérations, paramètres et types, namespaces, adresse du service, formats et actions SOAP. Les comparer au tableau de la partie 2.
-4. Comparer les noms exacts et le nombre d'opérations au contrat téléchargé. Noter toute différence ; ne pas conclure à une correspondance avant observation.
-5. Ouvrir la requête de `Add` : identifier l'enveloppe, l'éventuel Header, le Body, les namespaces, l'opération et les paramètres générés. Remplacer les valeurs exemples par 15 et 20, puis envoyer.
-6. Vérifier la réponse XML et le résultat 35 ; relever le statut HTTP et l'absence ou la présence d'un SOAP Fault. Un statut HTTP seul ne valide pas le résultat métier.
-7. Enregistrer le projet SoapUI et les preuves anonymisées dans `evidence/` : WSDL effectivement utilisé, requête, réponse et capture du résultat.
+## 5. Validation expérimentale
 
-### Compte rendu à compléter après exécution
+### Appel du service
 
-| Élément | Observation |
-|---|---|
-| Date et version de SoapUI | À renseigner |
-| Import du WSDL | Non validé |
-| Nom du service et adresse | À relever |
-| Bindings et opérations | À relever |
-| Éléments générés automatiquement | À relever |
-| Comparaison avec les hypothèses | À effectuer |
-| Résultat de Add(15,20) | Attendu : 35 ; reçu : non observé |
-| Statut HTTP / SOAP Fault | Non observé |
-| Preuves | Aucune exécution SoapUI enregistrée |
+L'appel HTTP effectué le **31 octobre 2026** a renvoyé **HTTP 200 OK** et le résultat **35** pour `Add(15,20)`. La réponse reçue contient :
+
+```xml
+<AddResponse xmlns="http://tempuri.org/">
+  <AddResult>35</AddResult>
+</AddResponse>
+```
+
+Le résultat reçu correspond au calcul attendu : **15 + 20 = 35**. Aucun élément `SOAP Fault` n'est présent dans cette réponse.
+
+### Workshop SoapUI
+
+Validation SoapUI en cours : cette section sera complétée après exécution réelle du projet.

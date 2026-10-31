@@ -1,0 +1,10 @@
+HTTP/1.1 200 OK
+Cache-Control: private, max-age=0
+Content-Type: text/xml; charset=utf-8
+Server: Microsoft-IIS/10.0
+X-AspNet-Version: 2.0.50727
+X-Powered-By: ASP.NET
+X-Powered-By-Plesk: PleskWin
+Date: Sat, 31 Oct 2026 18:16:23 GMT
+Content-Length: 326
+
