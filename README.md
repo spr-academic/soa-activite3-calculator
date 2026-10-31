@@ -1,13 +1,19 @@
-# Architecture Orientée Services — Travaux dirigés
+# SOA — Activité 3 : Atelier Calculator
 
-ESPRIT · Année universitaire 2026–2027
+ESPRIT · Architecture Orientée Services · Année universitaire 2026–2027
 
-Ce dépôt regroupe les travaux dirigés de SOA, avec une documentation en français et des commits par étape significative.
+Ce dépôt est consacré à l’atelier **Calculator**, classé sous **Activité 3** sur Blackboard.
 
-| Travail | Contenu | État |
-|---|---|---|
-| [TD01 — Calculator SOAP](td01-calculator/README.md) | Analyse du contrat et consommation avec SoapUI | Réponses préparées ; validation expérimentale à réaliser |
+L’objectif est de découvrir, analyser et consommer un service Web SOAP existant avec SoapUI avant une éventuelle intégration Java.
 
-Les autres TD seront ajoutés après réception de leurs énoncés. Aucun lien de dépendance avec ce TD n'est établi dans l'énoncé fourni.
+## Contenu
 
-Le sujet original reste hors du dépôt. Les réponses et observations sont distinguées des résultats attendus.
+- [Réponses et protocole de validation](atelier-calculator/README.md)
+- [Requête SOAP Add(15,20)](atelier-calculator/requests/add.xml)
+- [Preuves expérimentales](atelier-calculator/evidence/README.md)
+
+## État du travail
+
+Les réponses sont préparées en français. La requête XML a été vérifiée localement. La validation expérimentale avec SoapUI reste à réaliser ; aucun appel distant réussi n’est revendiqué.
+
+Le sujet original reste hors du dépôt. Les commits suivent les étapes significatives du travail.

@@ -1,4 +1,4 @@
-# TD01 — Découvrir, analyser et consommer un service Web SOAP
+# Activité 3 — Atelier Calculator : découvrir, analyser et consommer un service Web SOAP
 
 ## Périmètre et état
 
@@ -60,7 +60,7 @@ Nous ne sommes pas d'accord avec l'affirmation selon laquelle il serait inutile 
 
 Cette partie reste à exécuter. Les éléments ci-dessous sont un protocole et des attentes, pas un compte rendu d'observations.
 
-1. Dans SoapUI, créer un nouveau projet SOAP nommé `SOA-TD01-Calculator`, saisir l'URL du WSDL et activer la création des requêtes exemples. En cas d'échec, conserver le message d'erreur exact.
+1. Dans SoapUI, créer un nouveau projet SOAP nommé `SOA-Activite3-Calculator`, saisir l'URL du WSDL et activer la création des requêtes exemples. En cas d'échec, conserver le message d'erreur exact.
 2. Relever les interfaces/bindings, les opérations et les requêtes exemples générées. Vérifier quelles versions SOAP sont réellement proposées.
 3. Identifier les données récupérées : opérations, paramètres et types, namespaces, adresse du service, formats et actions SOAP. Les comparer au tableau de la partie 2.
 4. Comparer les noms exacts et le nombre d'opérations au contrat téléchargé. Noter toute différence ; ne pas conclure à une correspondance avant observation.
