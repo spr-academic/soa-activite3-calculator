@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-04",
+  "endpoint": "http://www.dneonline.com/calculator.asmx",
+  "httpStatus": 200,
+  "operation": "Add",
+  "intA": 15,
+  "intB": 20,
+  "result": 35
+}

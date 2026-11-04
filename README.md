@@ -107,6 +107,8 @@ L'appel HTTP effectué le **31 octobre 2026** a renvoyé **HTTP 200 OK** et le r
 
 Le résultat reçu correspond au calcul attendu : **15 + 20 = 35**. Aucun élément `SOAP Fault` n'est présent dans cette réponse.
 
+Une nouvelle vérification HTTP le **4 novembre 2026** a également renvoyé **200 OK** et **35**. La [réponse reçue](evidence/add-response-2026-11-04.xml) et le [relevé de l’appel](evidence/verification-2026-11-04.json) sont conservés dans le dépôt. Cette vérification complète les résultats SoapUI du 31 octobre.
+
 ### Workshop SoapUI
 
 Le projet **SOA-Activite3-Calculator** a été créé et exécuté le **31 octobre 2026** avec **SoapUI Open Source 5.9.1**, à partir de l’URL WSDL du fournisseur. L’import, la génération des requêtes et le test ont été réalisés avec le moteur SoapUI en mode automatisé, sans interface graphique.
